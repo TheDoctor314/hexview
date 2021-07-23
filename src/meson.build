@@ -4,4 +4,4 @@ hexview_sources = files([
 
 hexview_main = files(['main.cpp'])
 
-incdir = include_directories('.')
+hexview_inc = include_directories('.')
