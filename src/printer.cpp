@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <array>
+#include <iomanip>
 
 #include "printer.hpp"
 
@@ -55,14 +56,54 @@ constexpr auto as_char(u8 byte) -> char {
 }
 
 void Printer::print_all(std::istream &input) {
-    (void)m_idx;
-
     std::array<char, 16> buffer{};
 
-    input.read(buffer.data(), buffer.size());
+    for (;;) {
+        input.read(buffer.data(), buffer.size());
+        if (input.eof()) {
+            break;
+        }
+        auto len = input.gcount();
+        for (auto i = 0; i < len; ++i) {
+            print_byte(buffer[i]);
+        }
+    }
+}
 
-    std::transform(buffer.begin(), buffer.end(), buffer.begin(), as_char);
+void Printer::print_byte(u8 byte) {
+    if (m_idx % 16 == 1) {
+        print_position();
+    }
+    m_raw_line.push_back(byte);
 
-    m_writer.write(buffer.data(), buffer.size());
+    {
+        auto out_flags = m_output_line.flags();
+        m_output_line << std::hex << std::setfill('0') << std::setw(2)
+                      << static_cast<int>(byte);
+        m_output_line.flags(out_flags);
+    }
+
+    if (m_idx % 16 == 0) {
+        print_line();
+    }
+
+    m_idx++;
+}
+
+void Printer::print_position() {
+    auto out_flags = m_output_line.flags();
+
+    m_output_line << std::hex << std::setfill('0') << std::setw(8)
+                  << (m_idx - 1) << ": ";
+
+    m_output_line.flags(out_flags);
+}
+
+void Printer::print_line() {
+    m_output_line << '\n';
+    m_writer << m_output_line.str();
+
+    m_raw_line.clear();
+    m_output_line.str({});
 }
 } // namespace hexview
