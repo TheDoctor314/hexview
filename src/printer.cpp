@@ -6,7 +6,6 @@
 
 namespace hexview {
 enum class ByteCategory {
-    Null,
     AsciiPrintable,
     AsciiWhitespace,
     AsciiOther, // Control characters etc...
@@ -24,9 +23,7 @@ constexpr bool is_ascii_whitespace(u8 byte) {
 constexpr bool is_ascii(u8 byte) { return (byte & 128) == 0; }
 
 constexpr auto get_byte_category(u8 byte) -> ByteCategory {
-    if (byte == 0x00) {
-        return ByteCategory::Null;
-    } else if (is_ascii_printable(byte)) {
+    if (is_ascii_printable(byte)) {
         return ByteCategory::AsciiPrintable;
     } else if (is_ascii_whitespace(byte)) {
         return ByteCategory::AsciiWhitespace;
@@ -39,8 +36,6 @@ constexpr auto get_byte_category(u8 byte) -> ByteCategory {
 
 constexpr auto as_char(u8 byte) -> char {
     switch (get_byte_category(byte)) {
-    case ByteCategory::Null:
-        return '0';
     case ByteCategory::AsciiPrintable:
         return static_cast<char>(byte);
     case ByteCategory::AsciiWhitespace:
