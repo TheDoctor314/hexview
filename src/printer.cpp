@@ -103,7 +103,20 @@ void Printer::print_position() {
 }
 
 void Printer::print_line() {
+    auto len = m_raw_line.size();
+
+    m_output_line << "  ";
+    if (len < 16) {
+        auto out_flags = m_output_line.flags();
+        m_output_line << std::setw((16 - len) * 2) << std::setfill(' ') << "";
+        m_output_line.flags(out_flags);
+    }
+
+    for (auto byte : m_raw_line) {
+        m_output_line << as_char(byte);
+    }
     m_output_line << '\n';
+
     m_writer << m_output_line.str();
 
     m_raw_line.clear();
