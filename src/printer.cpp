@@ -60,14 +60,17 @@ void Printer::print_all(std::istream &input) {
 
     for (;;) {
         input.read(buffer.data(), buffer.size());
-        if (input.eof()) {
+        auto len = input.gcount();
+        if (len == 0) {
             break;
         }
-        auto len = input.gcount();
+
         for (auto i = 0; i < len; ++i) {
             print_byte(buffer[i]);
         }
     }
+
+    print_line();
 }
 
 void Printer::print_byte(u8 byte) {
