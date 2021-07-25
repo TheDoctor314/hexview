@@ -11,6 +11,11 @@ int main(int argc, char *argv[]) {
 
     auto printer = hexview::Printer(std::cout);
     std::ifstream input{argv[1], std::ios::binary};
+    if (!input) {
+        std::cerr << "Error: Could not read file\n";
+        return 0;
+    }
+
     printer.print_all(input);
 
     return 0;
