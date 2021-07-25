@@ -5,10 +5,9 @@
 #include <sstream>
 #include <vector>
 
-namespace hexview {
-using u8 = std::uint8_t;
-using u64 = std::uint64_t;
+#include "byte.hpp"
 
+namespace hexview {
 class Printer {
   public:
     Printer(std::ostream &out)
