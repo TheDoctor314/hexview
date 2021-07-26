@@ -10,8 +10,9 @@
 namespace hexview {
 class Printer {
   public:
-    Printer(std::ostream &out)
-        : m_writer(out) {}
+    Printer(std::ostream &out, u64 offset)
+        : m_display_offset(offset)
+        , m_writer(out) {}
 
     void print_position();
     void print_byte(u8 byte);

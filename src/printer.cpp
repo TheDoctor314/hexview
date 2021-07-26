@@ -47,7 +47,7 @@ void Printer::print_position() {
     auto out_flags = m_output_line.flags();
 
     m_output_line << std::hex << std::setfill('0') << std::setw(8)
-                  << (m_idx - 1) << ": ";
+                  << (m_idx - 1 + m_display_offset) << ": ";
 
     m_output_line.flags(out_flags);
 }
