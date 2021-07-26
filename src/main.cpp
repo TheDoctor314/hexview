@@ -43,7 +43,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (skip_offset < 0) {
-        input.seekg(-skip_offset, std::ios_base::end);
+        input.seekg(skip_offset, std::ios_base::end);
+        skip_offset = input.tellg();
     } else {
         input.seekg(skip_offset, std::ios_base::beg);
     }
