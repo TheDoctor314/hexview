@@ -59,17 +59,36 @@ inline std::optional<int> to_int(std::string_view input) {
         return input.substr(0, prefix.size()) == prefix;
     };
 
+    static const auto HEX_PREFIX = std::string_view("0x");
+
     // from_chars() does not support parsing '+'
-    if (starts_with(input, "+")) {
+    if (input.front() == '+') {
         input.remove_prefix(1);
     }
 
+    int base = 10;
+    if (starts_with(input, HEX_PREFIX)) {
+        input.remove_prefix(HEX_PREFIX.size());
+
+        // there should be no sign after prefix
+        if ((input.front() == '+') || (input.front() == '-')) {
+            return {};
+        }
+
+        base = 16;
+    }
+
     int out;
-    auto result =
-        std::from_chars(input.data(), input.data() + input.size(), out);
+    auto [remaining_input, ec] =
+        std::from_chars(input.data(), input.data() + input.size(), out, base);
+
+    // error if all input is not consumed
+    if (!std::string_view{remaining_input}.empty()) {
+        return {};
+    }
 
     // default std::errc indicates success
-    if (result.ec == std::errc{}) {
+    if (ec == std::errc{}) {
         return out;
     }
 
