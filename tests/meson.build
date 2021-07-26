@@ -1,6 +1,6 @@
 test_sources = files([
   'main.cpp',
-  'ascii.cpp',
+  'byte.cpp',
   'args.cpp',
 ])
 
