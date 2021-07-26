@@ -5,17 +5,26 @@
 #include "printer.hpp"
 
 namespace hexview {
+void Printer::set_length(u64 len) { m_remaining = len - m_idx + 1; }
+
 void Printer::print_all(std::istream &input) {
     std::array<char, 16> buffer{};
 
     for (;;) {
         input.read(buffer.data(), buffer.size());
-        auto len = input.gcount();
+        std::size_t len = input.gcount();
+
+        if (m_remaining) {
+            if (len > m_remaining.value()) {
+                len = m_remaining.value();
+            }
+            m_remaining = m_remaining.value() - len;
+        }
         if (len == 0) {
             break;
         }
 
-        for (auto i = 0; i < len; ++i) {
+        for (std::size_t i = 0; i < len; ++i) {
             print_byte(buffer[i]);
         }
     }
