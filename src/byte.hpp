@@ -1,6 +1,10 @@
 #pragma once
 
+#include <charconv>
 #include <cstdint>
+#include <optional>
+#include <string_view>
+
 namespace hexview {
 using u8 = std::uint8_t;
 using u64 = std::uint64_t;
@@ -50,4 +54,25 @@ constexpr auto as_char(u8 byte) -> char {
     __builtin_unreachable();
 }
 
+inline std::optional<int> to_int(std::string_view input) {
+    auto starts_with = [](auto &input, std::string_view prefix) -> bool {
+        return input.substr(0, prefix.size()) == prefix;
+    };
+
+    // from_chars() does not support parsing '+'
+    if (starts_with(input, "+")) {
+        input.remove_prefix(1);
+    }
+
+    int out;
+    auto result =
+        std::from_chars(input.data(), input.data() + input.size(), out);
+
+    // default std::errc indicates success
+    if (result.ec == std::errc{}) {
+        return out;
+    }
+
+    return {};
+}
 } // namespace hexview
