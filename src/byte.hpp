@@ -5,6 +5,8 @@
 #include <optional>
 #include <string_view>
 
+#include "colour.hpp"
+
 namespace hexview {
 using u8 = std::uint8_t;
 using u64 = std::uint64_t;
@@ -36,6 +38,22 @@ constexpr auto get_byte_category(u8 byte) -> ByteCategory {
     }
 
     return ByteCategory::NonAscii;
+}
+
+constexpr auto get_byte_colour(u8 byte) -> Colour::Code {
+    switch (get_byte_category(byte)) {
+    case ByteCategory::AsciiPrintable:
+        return Colour::Cyan;
+    case ByteCategory::AsciiWhitespace:
+        return Colour::Green;
+    case ByteCategory::AsciiOther:
+        return Colour::White;
+    case ByteCategory::NonAscii:
+        return Colour::Yellow;
+        break;
+    }
+
+    __builtin_unreachable();
 }
 
 constexpr auto as_char(u8 byte) -> char {
