@@ -28,17 +28,17 @@ struct Colour {
             case None:
             case White:
             default:
-                return "[0m";
+                return "[00m";
             case Red:
-                return "[0;31m";
+                return "[31m";
             case Green:
-                return "[0;32m";
+                return "[32m";
             case Yellow:
-                return "[0;33m";
+                return "[33m";
             case Blue:
-                return "[0;34m";
+                return "[34m";
             case Cyan:
-                return "[0;36m";
+                return "[36m";
             }
         };
 
