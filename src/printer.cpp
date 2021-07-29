@@ -44,7 +44,7 @@ void Printer::print_byte(u8 byte) {
                      m_colour ? get_byte_colour(byte) : Colour::None};
         auto out_flags = m_output_line.flags();
         m_output_line << std::hex << std::setfill('0') << std::setw(2)
-                      << static_cast<int>(byte);
+                      << static_cast<int>(byte) << ' ';
         m_output_line.flags(out_flags);
     }
 
@@ -67,10 +67,10 @@ void Printer::print_position() {
 void Printer::print_line() {
     auto len = m_raw_line.size();
 
-    m_output_line << "  ";
+    m_output_line << " ";
     if (len < 16) {
         auto out_flags = m_output_line.flags();
-        m_output_line << std::setw((16 - len) * 2) << std::setfill(' ') << "";
+        m_output_line << std::setw((16 - len) * 3) << std::setfill(' ') << "";
         m_output_line.flags(out_flags);
     }
 
