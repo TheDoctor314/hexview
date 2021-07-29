@@ -40,7 +40,8 @@ void Printer::print_byte(u8 byte) {
     m_raw_line.push_back(byte);
 
     {
-        Colour guard{m_output_line, get_byte_colour(byte)};
+        Colour guard{m_output_line,
+                     m_colour ? get_byte_colour(byte) : Colour::None};
         auto out_flags = m_output_line.flags();
         m_output_line << std::hex << std::setfill('0') << std::setw(2)
                       << static_cast<int>(byte);

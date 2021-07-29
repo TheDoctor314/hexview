@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <unistd.h>
 
 #include "args.hpp"
 #include "printer.hpp"
@@ -60,6 +61,26 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    bool show_colour = isatty(STDOUT_FILENO);
+    if (parser.option_exists("--colour")) {
+        auto colour_or_err = parser.get_option("--colour");
+        if (colour_or_err) {
+            const auto &colour = colour_or_err.value();
+            if (colour == "always") {
+                show_colour = true;
+            } else if (colour == "never") {
+                show_colour = false;
+            } else if (colour == "auto") {
+            } else {
+                std::cerr << "Error: Failed to parse '--colour' argument\n";
+                return 1;
+            }
+        } else {
+            std::cerr << "Error: '--colour' should have an argument\n";
+            return 1;
+        }
+    }
+
     std::ifstream input{argv[1], std::ios::binary};
     if (!input) {
         std::cerr << "Error: Could not read file: '" << argv[1] << "'\n";
@@ -73,7 +94,7 @@ int main(int argc, char *argv[]) {
         input.seekg(skip_offset, std::ios_base::beg);
     }
 
-    auto printer = hexview::Printer(std::cout, skip_offset);
+    auto printer = hexview::Printer(std::cout, skip_offset, show_colour);
 
     if (length.has_value()) {
         printer.set_length(length.value());
@@ -86,10 +107,12 @@ int main(int argc, char *argv[]) {
 void print_help(std::ostream &out) {
     out << "Usage: ./hexview <filename> [options]\n\n"
         << "Options:\n"
-        << std::left << std::setw(10) << "-h"
+        << std::left << std::setw(20) << "-h"
         << "Print this help message\n"
-        << std::setw(10) << "-l <N>"
+        << std::setw(20) << "-l <N>"
         << "Only read N bytes from the input\n"
-        << std::setw(10) << "-s <N>"
-        << "Skip the first N bytes of the input\n";
+        << std::setw(20) << "-s <N>"
+        << "Skip the first N bytes of the input\n"
+        << std::setw(20) << "--colour <WHEN>"
+        << "Control use of colour - always, auto, never\n";
 }
