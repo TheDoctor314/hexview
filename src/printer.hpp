@@ -23,6 +23,10 @@ class Printer {
     void print_all(std::istream &input);
 
   private:
+    void print_header();
+    void print_footer();
+
+  private:
     u64 m_idx{1};
     std::optional<u64> m_remaining;
     u64 m_display_offset{0};
